@@ -1,12 +1,12 @@
 import React from "react";
 import { PageTitle } from "@/components/PageTitle";
 
-const Manage: React.FC = () => {
+const Description: React.FC = () => {
   return (
     <div>
-      <PageTitle title="全部项目" />
+      <PageTitle title="项目说明" />
     </div>
   );
 };
 
-export { Manage };
+export { Description };
