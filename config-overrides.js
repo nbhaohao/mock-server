@@ -1,12 +1,18 @@
 const path = require("path");
-function resolve(dir) {
-  return path.join(__dirname, ".", dir);
-}
+const { override, fixBabelImports, addWebpackAlias } = require("customize-cra");
 
-module.exports = function override(config, env) {
+module.exports = override(
   //do stuff with the webpack config...
-  config.resolve.alias = {
-    "@": resolve("src")
-  };
-  return config;
-};
+  // config.resolve.alias = {
+  //   "@": resolve("src")
+  // };
+  // return config;
+  fixBabelImports("import", {
+    libraryName: "antd",
+    libraryDirectory: "es",
+    style: "css"
+  }),
+  addWebpackAlias({
+    ["@"]: path.join(__dirname, ".", "src")
+  })
+);
