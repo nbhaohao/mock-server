@@ -1,0 +1,9 @@
+.float-add-button-component {
+  $button-size: 60px;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: $button-size !important;
+  height: $button-size !important;
+}
