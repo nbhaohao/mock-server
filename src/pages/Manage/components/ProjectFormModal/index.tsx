@@ -46,7 +46,7 @@ const useProjectForm = (
       }
       handleAddForm(values);
     });
-  }, [formEl, onCancel, handleAddForm]);
+  }, [formEl, handleAddForm]);
 
   // @ts-ignore
   return [formEl, checkAddFormValid];
