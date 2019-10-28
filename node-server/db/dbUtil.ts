@@ -1,11 +1,12 @@
-import fs from "fs";
-import path from "path";
+import * as fs from "fs";
+import * as path from "path";
+import { ProjectsArray } from "../types/db";
 
 const dbFile = path.resolve(__dirname, "db.json");
 
-const getDbData = async () => {
+const getDbData = async (): Promise<ProjectsArray> => {
   return fs.promises.readFile(dbFile).then(data => {
-    let dbData = {};
+    let dbData = [];
     try {
       dbData = JSON.parse(data.toString());
     } catch (e) {}
@@ -13,8 +14,13 @@ const getDbData = async () => {
   });
 };
 
+const saveDbData = async (newData: ProjectsArray): Promise<void> => {
+  return fs.promises.writeFile(dbFile, JSON.stringify(newData));
+};
+
 const dbUtil = {
-  getDbData
+  getDbData,
+  saveDbData
 };
 
 export { dbUtil };
