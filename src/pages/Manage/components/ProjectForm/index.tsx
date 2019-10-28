@@ -11,14 +11,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ form }) => {
   const { getFieldDecorator } = form;
   const projectInput = renderNormalInput({
     label: "项目名称",
-    key: "project_name",
+    key: "name",
     required: true,
     max: 10,
     getFieldDecorator
   });
   const originApiPathInput = renderNormalInput({
     label: "真实 API 地址",
-    key: "origin_api_path",
+    key: "url",
     required: true,
     getFieldDecorator
   });

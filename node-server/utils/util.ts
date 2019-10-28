@@ -9,6 +9,29 @@ const codeMessageMap: CodeMessageMapType = {
   "50000": "系统错误"
 };
 
+// 生成成功
+export const generateSuccessResponse = ({
+  response,
+  result = {},
+  code = 0,
+  msg = "success"
+}: {
+  response: ServerResponse;
+  result?: {};
+  code?: number;
+  msg?: string;
+}): void => {
+  response.statusCode = 200;
+  response.setHeader("Content-Type", "application/json");
+  response.end(
+    JSON.stringify({
+      code,
+      result,
+      msg
+    })
+  );
+};
+
 // 生成错误码
 export const generateErrorResponse = ({
   response,
@@ -30,18 +53,17 @@ export const generateErrorResponse = ({
 };
 
 // 解析 request body 内容
-export const parseRequestBody = (request: IncomingMessage) => {
-  return new Promise(resolve => {
-    let data: string | object = "";
-    request.on("data", chunk => {
-      data += chunk;
+export const parseRequestBody = <T>(request: IncomingMessage) => {
+  return new Promise<T>(resolve => {
+    const bufferArray: Array<Buffer> = [];
+    let data: T;
+    request.on("data", (chunk: Buffer) => {
+      bufferArray.push(chunk);
     });
     request.on("end", () => {
       try {
-        data = JSON.parse(data.toString());
-      } catch (e) {
-        data = {};
-      }
+        data = JSON.parse(Buffer.concat(bufferArray).toString());
+      } catch (e) {}
       resolve(data);
     });
   });

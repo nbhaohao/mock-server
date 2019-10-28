@@ -1,7 +1,8 @@
-import http, { IncomingMessage, ServerResponse } from "http";
 import { PORT, API_PRE_FIX } from "./config";
 import { projectsRoute } from "./routes/projects";
 import { generateErrorResponse } from "./utils/util";
+import * as http from "http";
+import { IncomingMessage, ServerResponse } from "http";
 
 const server = http.createServer();
 server.on(
