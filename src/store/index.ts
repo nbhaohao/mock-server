@@ -50,7 +50,7 @@ const refactorModuleEffects = (dispatch: DispatchType) => {
     initialState[moduleItem.namespace] = moduleItem.state;
     for (const effectMethod in moduleItem.effects) {
       const originMethod = moduleItem.effects[effectMethod];
-      moduleItem.effects[effectMethod] = async () => {
+      moduleItem.effects[effectMethod] = async payload => {
         dispatch({
           type: GLOBAL_LOADING_ACTION,
           payload: {
@@ -59,7 +59,17 @@ const refactorModuleEffects = (dispatch: DispatchType) => {
         });
         let response = undefined;
         if (moduleItem.effects) {
-          response = await originMethod();
+          try {
+            response = await originMethod(payload);
+          } catch (e) {
+            dispatch({
+              type: GLOBAL_LOADING_ACTION,
+              payload: {
+                [`${moduleItem.namespace}/${effectMethod}`]: false
+              }
+            });
+            return Promise.reject(e);
+          }
         }
         dispatch({
           type: GLOBAL_LOADING_ACTION,

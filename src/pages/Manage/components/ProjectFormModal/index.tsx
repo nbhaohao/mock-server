@@ -10,6 +10,10 @@ import { WrappedFormUtils } from "antd/lib/form/Form";
 
 import { ProjectForm } from "../ProjectForm";
 import { EffectContext, StoreContext } from "@/App";
+import { ADD_PROJECT_ACTION, Project } from "@/services/projects";
+import { ServerResponse } from "@/utils/request";
+import { messageUtil } from "@/utils/messageUtil";
+import { ADD_PROJECT_SUCCESS } from "@/constants/projects";
 
 interface ProjectFormModalProps extends ModalProps {}
 
@@ -27,26 +31,31 @@ const useProjectForm = (
   const formEl = useRef<WrappedFormUtils>(null);
   const effect = useContext(EffectContext);
   const handleAddForm = useCallback(
-    (values: addFormValues) => {
-      console.log("values", values);
-      effect({
-        type: "projects/addNewProject"
+    async (values: addFormValues, event) => {
+      const response: ServerResponse<Array<Project>> = await effect({
+        type: ADD_PROJECT_ACTION,
+        payload: values
       });
+      messageUtil({ type: "success", msg: ADD_PROJECT_SUCCESS });
+      onCancel && onCancel(event);
     },
     [effect]
   );
-  const checkAddFormValid = useCallback(() => {
-    const { current } = formEl;
-    if (current === null) {
-      return;
-    }
-    current.validateFields((error, values: addFormValues) => {
-      if (error) {
+  const checkAddFormValid = useCallback(
+    event => {
+      const { current } = formEl;
+      if (current === null) {
         return;
       }
-      handleAddForm(values);
-    });
-  }, [formEl, handleAddForm]);
+      current.validateFields((error, values: addFormValues) => {
+        if (error) {
+          return;
+        }
+        handleAddForm(values, event);
+      });
+    },
+    [formEl, handleAddForm]
+  );
 
   // @ts-ignore
   return [formEl, checkAddFormValid];
@@ -59,7 +68,7 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
 }) => {
   const [formEl, checkAddFormValid] = useProjectForm(onCancel);
   const { loading } = useContext(StoreContext);
-  const addProjectLoading = loading["projects/addNewProject"];
+  const addProjectLoading = loading[ADD_PROJECT_ACTION];
   return (
     <Modal
       confirmLoading={addProjectLoading}

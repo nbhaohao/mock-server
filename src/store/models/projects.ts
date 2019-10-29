@@ -1,11 +1,10 @@
-import { requestAddProject } from "@/services/projects";
+import { addProject } from "@/services/projects";
+import {PROJECT_STORE} from "@/constants/store";
 
 export const projects = {
-  namespace: "projects",
+  namespace: PROJECT_STORE,
   state: {},
   effects: {
-    addNewProject: () => {
-      return requestAddProject();
-    }
+    addProject
   }
 };
