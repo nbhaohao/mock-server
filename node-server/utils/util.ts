@@ -47,7 +47,8 @@ export const generateErrorResponse = ({
   response.end(
     JSON.stringify({
       code,
-      msg: msg || codeMessageMap[code]
+      msg: msg || codeMessageMap[code],
+      result: {}
     })
   );
 };
