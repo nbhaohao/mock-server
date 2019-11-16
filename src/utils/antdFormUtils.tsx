@@ -7,12 +7,14 @@ export const renderNormalInput = ({
   key,
   required = true,
   max = 0,
-  getFieldDecorator
+  getFieldDecorator,
+  onPressEnter = () => {}
 }: {
   label: string;
   key: string;
   required: boolean;
   max?: number;
+  onPressEnter?: () => void;
   getFieldDecorator: WrappedFormUtils["getFieldDecorator"];
 }): React.ReactElement => {
   const rules = [];
@@ -32,7 +34,7 @@ export const renderNormalInput = ({
     <Form.Item label={label}>
       {getFieldDecorator(key, {
         rules
-      })(<Input placeholder={`请输入${label}`} />)}
+      })(<Input onPressEnter={onPressEnter} placeholder={`请输入${label}`} />)}
     </Form.Item>
   );
 };

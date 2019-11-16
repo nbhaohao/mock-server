@@ -5,9 +5,13 @@ import { renderNormalInput } from "@/utils/antdFormUtils";
 
 interface ProjectFormProps {
   form: WrappedFormUtils;
+  onInputPressEnter: () => void;
 }
 
-const ProjectForm: React.FC<ProjectFormProps> = ({ form }) => {
+const ProjectForm: React.FC<ProjectFormProps> = ({
+  form,
+  onInputPressEnter
+}) => {
   const { getFieldDecorator } = form;
   const projectInput = renderNormalInput({
     label: "项目名称",
@@ -20,7 +24,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ form }) => {
     label: "真实 API 地址",
     key: "url",
     required: true,
-    getFieldDecorator
+    getFieldDecorator,
+    onPressEnter: onInputPressEnter
   });
   return (
     <Form wrapperCol={{ span: 14 }} labelCol={{ span: 6 }}>

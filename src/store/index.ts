@@ -11,7 +11,7 @@ export interface InitialStateType {
   [key: string]: any;
 }
 
-interface ActionType {
+export interface ActionType {
   type: string;
   payload?: any;
 }
@@ -26,6 +26,7 @@ export interface EffectType {
 
 const modules: ModelsType = _modules;
 const GLOBAL_LOADING_ACTION = "CHANGE_LOADING";
+const GLOBAL_UPDATE_STATE = "UPDATE_STATE";
 const initialState: InitialStateType = {
   loading: {}
 };
@@ -39,6 +40,12 @@ const reducer = (state: InitialStateType, action: ActionType) => {
         ...state.loading,
         ...payload
       }
+    };
+  }
+  if (type === GLOBAL_UPDATE_STATE) {
+    return {
+      ...state,
+      ...payload
     };
   }
   return state;
@@ -60,7 +67,11 @@ const refactorModuleEffects = (dispatch: DispatchType) => {
         let response = undefined;
         if (moduleItem.effects) {
           try {
-            response = await originMethod(payload);
+            response = await originMethod(payload, {
+              state: moduleItem.state,
+              dispatch,
+              rootState: initialState
+            });
           } catch (e) {
             dispatch({
               type: GLOBAL_LOADING_ACTION,
@@ -85,7 +96,36 @@ const refactorModuleEffects = (dispatch: DispatchType) => {
 
 const useStore = (): [InitialStateType, DispatchType, EffectType] => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  refactorModuleEffects(dispatch);
+  const _dispatch = (action: ActionType) => {
+    if (action.type === GLOBAL_LOADING_ACTION) {
+      dispatch({
+        type: GLOBAL_LOADING_ACTION,
+        payload: action.payload
+      });
+      return;
+    }
+    const [namespace, actionName] = action.type.split("/");
+    const moduleItem = modules[namespace];
+    if (!moduleItem) {
+      return;
+    }
+    const reducers = moduleItem.reducers;
+    if (!reducers) {
+      return;
+    }
+    const reducerMethod = reducers[actionName];
+    if (!reducerMethod) {
+      return;
+    }
+    const newNamespaceState = reducerMethod(moduleItem.state, action.payload);
+    dispatch({
+      type: GLOBAL_UPDATE_STATE,
+      payload: {
+        [namespace]: newNamespaceState
+      }
+    });
+  };
+  refactorModuleEffects(_dispatch);
   const effect = (action: ActionType) => {
     const [namespace, actionName] = action.type.split("/");
     const moduleItem = modules[namespace];
@@ -100,9 +140,13 @@ const useStore = (): [InitialStateType, DispatchType, EffectType] => {
     if (!effectMethod) {
       return;
     }
-    return effectMethod(action.payload);
+    return effectMethod(action.payload, {
+      state: moduleItem.state,
+      rootState: state,
+      dispatch: _dispatch
+    });
   };
-  return [state, dispatch, effect];
+  return [state, _dispatch, effect];
 };
 
 export { useStore, initialState };

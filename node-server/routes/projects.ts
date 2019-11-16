@@ -7,6 +7,17 @@ import {
 import { dbUtil } from "../db/dbUtil";
 import { addProjectBody } from "../types/projects";
 
+const getProject = async (
+  request: IncomingMessage,
+  response: ServerResponse
+) => {
+  const projectsArray = await dbUtil.getDbData();
+  generateSuccessResponse({
+    response,
+    result: projectsArray
+  });
+};
+
 const addProject = async (
   request: IncomingMessage,
   response: ServerResponse
@@ -38,6 +49,7 @@ const handleOptions = async (
 };
 
 const handler: { [key: string]: any } = {
+  GET: getProject,
   POST: addProject,
   OPTIONS: handleOptions
 };

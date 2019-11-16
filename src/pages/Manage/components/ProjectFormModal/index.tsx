@@ -9,8 +9,12 @@ import { ModalProps } from "antd/lib/modal";
 import { WrappedFormUtils } from "antd/lib/form/Form";
 
 import { ProjectForm } from "../ProjectForm";
-import { EffectContext, StoreContext } from "@/App";
-import { ADD_PROJECT_ACTION, Project } from "@/services/projects";
+import { EffectContext, StoreContext, DispatchContext } from "@/App";
+import {
+  ADD_PROJECT_ACTION,
+  Project,
+  SAVE_PROJECTS
+} from "@/services/projects";
 import { ServerResponse } from "@/utils/request";
 import { messageUtil } from "@/utils/messageUtil";
 import { ADD_PROJECT_SUCCESS } from "@/constants/projects";
@@ -30,16 +34,21 @@ const useProjectForm = (
 ] => {
   const formEl = useRef<WrappedFormUtils>(null);
   const effect = useContext(EffectContext);
+  const dispatch = useContext(DispatchContext);
   const handleAddForm = useCallback(
     async (values: addFormValues, event) => {
       const response: ServerResponse<Array<Project>> = await effect({
         type: ADD_PROJECT_ACTION,
         payload: values
       });
+      dispatch({
+        type: SAVE_PROJECTS,
+        payload: response.result
+      });
       messageUtil({ type: "success", msg: ADD_PROJECT_SUCCESS });
       onCancel && onCancel(event);
     },
-    [effect]
+    [effect, onCancel, dispatch]
   );
   const checkAddFormValid = useCallback(
     event => {
@@ -69,15 +78,19 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   const [formEl, checkAddFormValid] = useProjectForm(onCancel);
   const { loading } = useContext(StoreContext);
   const addProjectLoading = loading[ADD_PROJECT_ACTION];
+  const extraProps = {
+    onInputPressEnter: checkAddFormValid
+  };
   return (
     <Modal
+      destroyOnClose
       confirmLoading={addProjectLoading}
       visible={visible}
       title={title}
       onCancel={onCancel}
       onOk={checkAddFormValid}
     >
-      <ProjectForm ref={formEl} />
+      <ProjectForm ref={formEl} {...extraProps} />
     </Modal>
   );
 };
