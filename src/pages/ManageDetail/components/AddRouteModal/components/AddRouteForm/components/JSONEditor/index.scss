@@ -1,0 +1,13 @@
+.jsonEditorWrapper {
+  position: relative;
+  .jsonEditorPreviewLink {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+  }
+  .preJsonValueWrapper {
+    position: relative;
+    border: 1px solid #d9d9d9;
+    padding: 4px 11px;
+  }
+}

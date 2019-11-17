@@ -2,6 +2,7 @@ import React from "react";
 import { Form } from "antd";
 import { WrappedFormUtils } from "antd/lib/form/Form";
 import { renderNormalInput } from "@/utils/antdFormUtils";
+import { FORM_WRAPPER_COL, FORM_LABEL_COL } from "@/constants/form";
 
 interface ProjectFormProps {
   form: WrappedFormUtils;
@@ -28,7 +29,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     onPressEnter: onInputPressEnter
   });
   return (
-    <Form wrapperCol={{ span: 14 }} labelCol={{ span: 6 }}>
+    <Form wrapperCol={FORM_WRAPPER_COL} labelCol={FORM_LABEL_COL}>
       {projectInput}
       {originApiPathInput}
     </Form>

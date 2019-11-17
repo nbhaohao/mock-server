@@ -1,6 +1,7 @@
 import React from "react";
 import { Manage } from "@/pages/Manage";
 import { Description } from "@/pages/Description";
+import { ManageDetail } from "@/pages/ManageDetail";
 
 interface Route {
   path: string;
@@ -21,6 +22,12 @@ export const routeList: RouteList = [
     component: Manage,
     menuText: "项目",
     title: "全部项目"
+  },
+  {
+    path: "/manage/:id",
+    component: ManageDetail,
+    menuText: "项目详情",
+    title: "项目详情"
   },
   {
     path: "/description",
