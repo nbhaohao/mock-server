@@ -26,7 +26,7 @@ const ProjectGrid: React.FC = () => {
         {projects.length > 0 ? (
           <Row gutter={16}>
             {projects.map((project: Project) => (
-              <Col span={6} key={project.name}>
+              <Col span={6} key={project.id}>
                 <ProjectGridItem project={project} />
               </Col>
             ))}

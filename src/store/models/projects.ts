@@ -1,5 +1,7 @@
 import {
   addProject,
+  queryProject,
+  putProject,
   getProjectsData,
   Project,
   SAVE_PROJECTS
@@ -17,7 +19,9 @@ export const projects: ModelType = {
     projects: []
   },
   effects: {
+    queryProject,
     addProject,
+    putProject,
     async getProjects(_, { dispatch }) {
       const projectsRes = await getProjectsData();
       dispatch({

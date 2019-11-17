@@ -1,8 +1,10 @@
+import * as http from "http";
+import { IncomingMessage, ServerResponse } from "http";
+import * as URL from "url";
+import * as queryString from "querystring";
 import { PORT, API_PRE_FIX } from "./config";
 import { projectsRoute } from "./routes/projects";
 import { generateErrorResponse } from "./utils/util";
-import * as http from "http";
-import { IncomingMessage, ServerResponse } from "http";
 
 const server = http.createServer();
 server.on(
@@ -13,10 +15,12 @@ server.on(
       generateErrorResponse({ response, code: "20000" });
       return;
     }
-    const pathName = url ? url.slice(1) : "";
-    if (pathName === `${API_PRE_FIX}/${projectsRoute.path}`) {
+    const parseUrl = URL.parse(url || "");
+    const { pathname, query } = parseUrl;
+    const searchParams = queryString.parse(query || "");
+    if (pathname === `/${API_PRE_FIX}/${projectsRoute.path}`) {
       try {
-        await projectsRoute.handler(request, response);
+        await projectsRoute.handler(request, response, searchParams);
       } catch (e) {
         generateErrorResponse({ response, code: "20000", msg: e.toString() });
       }
