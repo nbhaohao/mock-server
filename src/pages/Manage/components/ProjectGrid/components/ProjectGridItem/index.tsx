@@ -20,7 +20,7 @@ const ProjectGridItem: React.FC<ProjectGridItemProps> = ({
   }, [history, project.id]);
   const handleEditProject = useCallback(() => {
     onEditProject(project);
-  }, [project]);
+  }, [project, onEditProject]);
   const actions = [
     <Icon type="edit" key="edit" onClick={handleEditProject} />,
     <Icon type="table" key="detail" onClick={handleJumpToProjectDetail} />

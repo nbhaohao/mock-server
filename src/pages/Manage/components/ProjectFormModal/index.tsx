@@ -81,7 +81,7 @@ const useProjectForm = (
       messageUtil({ type: "success", msg: PUT_PROJECT_SUCCESS });
       onCancel && onCancel(event);
     },
-    [effect, onCancel, dispatch, editInitialProject]
+    [effect, onCancel, dispatch, editInitialProject.id, projects]
   );
   const checkAddFormValid = useCallback(
     event => {
@@ -100,7 +100,7 @@ const useProjectForm = (
         }
       });
     },
-    [formEl, handleAddForm, handleEditForm]
+    [formEl, handleAddForm, handleEditForm, editInitialProject.id]
   );
 
   // @ts-ignore

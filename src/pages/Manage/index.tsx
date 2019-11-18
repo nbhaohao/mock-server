@@ -35,7 +35,7 @@ const Manage: React.FC = () => {
   const handleAddProject = useCallback(() => {
     setTempProject({ name: "", url: "", id: "", routes: [] });
     showModal();
-  }, [setTempProject]);
+  }, [setTempProject, showModal]);
   return (
     <div className="manage-component">
       <PageTitle title="全部项目" />
