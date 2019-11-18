@@ -5,6 +5,10 @@ import { GET_PROJECTS, Project } from "@/services/projects";
 import { ProjectGridItem } from "./components/ProjectGridItem";
 import "./index.scss";
 
+interface ProjectGridProps {
+  onEditProject: (project: Project) => void;
+}
+
 const useInitProjectsData = () => {
   const effect = useContext(EffectContext);
   useEffect(() => {
@@ -14,7 +18,7 @@ const useInitProjectsData = () => {
   }, []);
 };
 
-const ProjectGrid: React.FC = () => {
+const ProjectGrid: React.FC<ProjectGridProps> = ({ onEditProject }) => {
   useInitProjectsData();
   const { loading } = useContext(StoreContext);
   const {
@@ -27,7 +31,10 @@ const ProjectGrid: React.FC = () => {
           <Row gutter={16}>
             {projects.map((project: Project) => (
               <Col span={6} key={project.id}>
-                <ProjectGridItem project={project} />
+                <ProjectGridItem
+                  project={project}
+                  onEditProject={onEditProject}
+                />
               </Col>
             ))}
           </Row>

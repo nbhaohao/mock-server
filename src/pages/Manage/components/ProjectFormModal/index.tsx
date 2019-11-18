@@ -13,13 +13,16 @@ import { EffectContext, StoreContext, DispatchContext } from "@/App";
 import {
   ADD_PROJECT_ACTION,
   Project,
+  PUT_PROJECT,
   SAVE_PROJECTS
 } from "@/services/projects";
 import { ServerResponse } from "@/utils/request";
 import { messageUtil } from "@/utils/messageUtil";
-import { ADD_PROJECT_SUCCESS } from "@/constants/projects";
+import { ADD_PROJECT_SUCCESS, PUT_PROJECT_SUCCESS } from "@/constants/projects";
 
-interface ProjectFormModalProps extends ModalProps {}
+interface ProjectFormModalProps extends ModalProps {
+  editInitialProject: Project;
+}
 
 interface addFormValues {
   project_name: string;
@@ -27,7 +30,10 @@ interface addFormValues {
 }
 
 const useProjectForm = (
-  onCancel: ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void) | undefined
+  onCancel:
+    | ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void)
+    | undefined,
+  editInitialProject: Project
 ): [
   MutableRefObject<null>,
   (e: React.MouseEvent<HTMLElement, MouseEvent>) => void
@@ -35,6 +41,9 @@ const useProjectForm = (
   const formEl = useRef<WrappedFormUtils>(null);
   const effect = useContext(EffectContext);
   const dispatch = useContext(DispatchContext);
+  const {
+    projects: { projects }
+  } = useContext(StoreContext);
   const handleAddForm = useCallback(
     async (values: addFormValues, event) => {
       const response: ServerResponse<Array<Project>> = await effect({
@@ -50,6 +59,30 @@ const useProjectForm = (
     },
     [effect, onCancel, dispatch]
   );
+
+  const handleEditForm = useCallback(
+    async (values: addFormValues, event) => {
+      const response: ServerResponse<Project> = await effect({
+        type: PUT_PROJECT,
+        payload: {
+          ...values,
+          id: editInitialProject.id
+        }
+      });
+      dispatch({
+        type: SAVE_PROJECTS,
+        payload: projects.map((project: Project) => {
+          if (project.id === response.result.id) {
+            return response.result;
+          }
+          return project;
+        })
+      });
+      messageUtil({ type: "success", msg: PUT_PROJECT_SUCCESS });
+      onCancel && onCancel(event);
+    },
+    [effect, onCancel, dispatch, editInitialProject]
+  );
   const checkAddFormValid = useCallback(
     event => {
       const { current } = formEl;
@@ -60,10 +93,14 @@ const useProjectForm = (
         if (error) {
           return;
         }
-        handleAddForm(values, event);
+        if (editInitialProject.id) {
+          handleEditForm(values, event);
+        } else {
+          handleAddForm(values, event);
+        }
       });
     },
-    [formEl, handleAddForm]
+    [formEl, handleAddForm, handleEditForm]
   );
 
   // @ts-ignore
@@ -73,18 +110,24 @@ const useProjectForm = (
 const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   visible,
   title,
-  onCancel
+  onCancel,
+  editInitialProject
 }) => {
-  const [formEl, checkAddFormValid] = useProjectForm(onCancel);
+  const [formEl, checkAddFormValid] = useProjectForm(
+    onCancel,
+    editInitialProject
+  );
   const { loading } = useContext(StoreContext);
   const addProjectLoading = loading[ADD_PROJECT_ACTION];
+  const putProjectLoading = loading[PUT_PROJECT];
   const extraProps = {
+    initialProject: editInitialProject,
     onInputPressEnter: checkAddFormValid
   };
   return (
     <Modal
       destroyOnClose
-      confirmLoading={addProjectLoading}
+      confirmLoading={addProjectLoading || putProjectLoading}
       visible={visible}
       title={title}
       onCancel={onCancel}

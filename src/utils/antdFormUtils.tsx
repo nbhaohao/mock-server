@@ -9,8 +9,10 @@ export const renderNormalInput = ({
   max = 0,
   getFieldDecorator,
   onPressEnter = () => {},
-  placeholder
+  placeholder,
+  initialValue
 }: {
+  initialValue?: any;
   label: string;
   key: string;
   required: boolean;
@@ -35,6 +37,7 @@ export const renderNormalInput = ({
   return (
     <Form.Item label={label}>
       {getFieldDecorator(key, {
+        initialValue: initialValue || undefined,
         rules
       })(
         <Input

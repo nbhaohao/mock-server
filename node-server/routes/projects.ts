@@ -76,6 +76,13 @@ const putProject = async (
     generateErrorResponse({ response, code: "20000", msg: "未找到项目" });
     return;
   }
+  const isRepeatName = projectsArray.find(
+    project => project.id !== id && project.name === params.name
+  );
+  if (isRepeatName) {
+    generateErrorResponse({ response, code: "20000", msg: "项目名称不得重复" });
+    return;
+  }
   const newProject: Project = { id: "", name: "", url: "", routes: [] };
   projectsArray = projectsArray.map(project => {
     if (project.id === id) {
