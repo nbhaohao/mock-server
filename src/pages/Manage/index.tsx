@@ -4,6 +4,7 @@ import "./index.scss";
 import { FloatAddButton } from "./components/FloatAddButton";
 import { ProjectFormModal } from "./components/ProjectFormModal";
 import { ProjectGrid } from "./components/ProjectGrid";
+import { Project } from "@/services/projects";
 
 const useShowAddOrEditModal = (): [boolean, () => void, () => void] => {
   const [modalVisibility, changeModalVisibility] = useState(false);
@@ -18,12 +19,30 @@ const useShowAddOrEditModal = (): [boolean, () => void, () => void] => {
 
 const Manage: React.FC = () => {
   const [modalVisibility, showModal, hiddenModal] = useShowAddOrEditModal();
+  const [tempProject, setTempProject] = useState<Project>({
+    name: "",
+    url: "",
+    id: "",
+    routes: []
+  });
+  const handleEditProject = useCallback(
+    (project: Project) => {
+      setTempProject(project);
+      showModal();
+    },
+    [showModal, setTempProject]
+  );
+  const handleAddProject = useCallback(() => {
+    setTempProject({ name: "", url: "", id: "", routes: [] });
+    showModal();
+  }, [setTempProject]);
   return (
     <div className="manage-component">
       <PageTitle title="全部项目" />
-      <ProjectGrid />
-      <FloatAddButton onClick={showModal} />
+      <ProjectGrid onEditProject={handleEditProject} />
+      <FloatAddButton onClick={handleAddProject} />
       <ProjectFormModal
+        editInitialProject={tempProject}
         visible={modalVisibility}
         title="添加项目"
         onCancel={hiddenModal}

@@ -6,16 +6,25 @@ import "./index.scss";
 
 interface ProjectGridItemProps {
   project: Project;
+  onEditProject: (project: Project) => void;
 }
 
-const ProjectGridItem: React.FC<ProjectGridItemProps> = ({ project }) => {
+const ProjectGridItem: React.FC<ProjectGridItemProps> = ({
+  project,
+  onEditProject
+}) => {
   const history = useHistory();
 
-  const handleEditProject = useCallback(() => {
+  const handleJumpToProjectDetail = useCallback(() => {
     history.push(`/manage/${project.id}`);
   }, [history, project.id]);
-
-  const actions = [<Icon type="edit" key="edit" onClick={handleEditProject} />];
+  const handleEditProject = useCallback(() => {
+    onEditProject(project);
+  }, [project]);
+  const actions = [
+    <Icon type="edit" key="edit" onClick={handleEditProject} />,
+    <Icon type="table" key="detail" onClick={handleJumpToProjectDetail} />
+  ];
 
   return (
     <Card
