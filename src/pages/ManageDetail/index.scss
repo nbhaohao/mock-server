@@ -1,6 +1,9 @@
 .manage-detail-component {
   .manage-detail-content-wrapper {
     padding: 0 22px;
+    .manage-back-button {
+      margin-right: 8px;
+    }
     .manage-detail-add-button {
       margin-bottom: 12px;
     }

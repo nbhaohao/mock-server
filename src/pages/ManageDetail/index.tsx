@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { Spin, Button } from "antd";
 import "./index.scss";
 import { PageTitle } from "@/components/PageTitle";
@@ -39,6 +39,7 @@ const useQueryProjectDetail = (id: string, effect: EffectType) => {
 
 const ManageDetail: React.FC = () => {
   const { id } = useParams();
+  const history = useHistory();
   const effect = useContext(EffectContext);
   const { loading } = useContext(StoreContext);
   const { projectObject, setProject } = useQueryProjectDetail(id || "", effect);
@@ -65,11 +66,17 @@ const ManageDetail: React.FC = () => {
     },
     [projectObject, setProject, hiddenModal]
   );
+  const handleBackToPage = useCallback(() => {
+    history.push("/manage");
+  }, [history]);
   return (
     <Spin spinning={loading[QUERY_PROJECT]}>
       <div className="manage-detail-component">
         <PageTitle title={pageTitle} />
         <div className="manage-detail-content-wrapper">
+          <Button className="manage-back-button" onClick={handleBackToPage}>
+            返回主页
+          </Button>
           <Button
             type="primary"
             className="manage-detail-add-button"
