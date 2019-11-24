@@ -123,21 +123,11 @@ const handler: { [key: string]: any } = {
   PUT: putProject
 };
 
-const handleAccessOrigin = (response: ServerResponse) => {
-  response.setHeader("Access-Control-Allow-Origin", "*");
-  response.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-  response.setHeader("Access-Control-Allow-Headers", "*");
-};
-
 const handleProjectsRoutes = async (
   request: IncomingMessage,
   response: ServerResponse,
   searchParams: {}
 ) => {
-  handleAccessOrigin(response);
   const { method } = request;
   if (method === undefined) {
     generateErrorResponse({ response, code: "20000" });
