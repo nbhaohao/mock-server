@@ -1,6 +1,7 @@
 import { dbUtil } from "../db/dbUtil";
 import { IncomingMessage, ServerResponse } from "http";
-import { generateErrorResponse, generateSuccessResponse } from "../utils/util";
+import {generateErrorResponse, handleAccessOrigin} from "../utils/util";
+import { proxyRequest } from "../utils/proxy";
 import { Project } from "../types/db";
 
 const generateUrlCheckReg = (url: string) => {
@@ -34,13 +35,13 @@ const handleMockRoute = ({
   path,
   request,
   response,
-  searchParams,
+  query,
   projectItem
 }: {
   path: string;
   request: IncomingMessage;
   response: ServerResponse;
-  searchParams: {};
+  query: string;
   projectItem: Project;
 }) => {
   const mockRoute = projectItem.routes.find(
@@ -48,9 +49,15 @@ const handleMockRoute = ({
       route.path === path && route.method.toUpperCase() === request.method
   );
   if (mockRoute === undefined) {
-    //TODO 发代理请求
+    const queryString = query ? `?${query}` : "";
+    proxyRequest({
+      url: `http://${projectItem.url}/${path}${queryString}`,
+      originRequest: request,
+      originResponse: response
+    });
     return;
   }
+  handleAccessOrigin(response);
   response.statusCode = 200;
   response.setHeader("Content-Type", "application/json");
   response.end(JSON.stringify(JSON.parse(mockRoute.mockResponse)));
@@ -60,7 +67,7 @@ const handleMockRoutes = async (
   pathname: string,
   request: IncomingMessage,
   response: ServerResponse,
-  searchParams: {},
+  query: string,
   mockId: string
 ) => {
   const projectsArray = await dbUtil.getDbData();
@@ -75,7 +82,7 @@ const handleMockRoutes = async (
     return;
   }
   const { path } = pathRegResult.groups;
-  handleMockRoute({ path, request, response, searchParams, projectItem });
+  handleMockRoute({ path, request, response, query, projectItem });
 };
 
 const mockRoute = {

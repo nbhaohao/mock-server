@@ -54,7 +54,10 @@ export const generateErrorResponse = ({
 };
 
 // 解析 request body 内容
-export const parseRequestBody = <T>(request: IncomingMessage) => {
+export const parseRequestBody = <T>(
+  request: IncomingMessage,
+  needJsonParse = true
+) => {
   return new Promise<T>(resolve => {
     const bufferArray: Array<Buffer> = [];
     let data: T;
@@ -63,7 +66,8 @@ export const parseRequestBody = <T>(request: IncomingMessage) => {
     });
     request.on("end", () => {
       try {
-        data = JSON.parse(Buffer.concat(bufferArray).toString());
+        const bufferData = Buffer.concat(bufferArray).toString();
+        data = needJsonParse ? JSON.parse(bufferData) : bufferData;
       } catch (e) {}
       resolve(data);
     });
