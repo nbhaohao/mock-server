@@ -13,7 +13,6 @@ server.on(
   "request",
   async (request: IncomingMessage, response: ServerResponse) => {
     const { url, method } = request;
-    handleAccessOrigin(response);
     if (method === undefined) {
       generateErrorResponse({ response, code: "20000" });
       return;
@@ -22,6 +21,7 @@ server.on(
     const { pathname, query } = parseUrl;
     const searchParams = queryString.parse(query || "");
     if (pathname === `/${API_PRE_FIX}/${projectsRoute.path}`) {
+      handleAccessOrigin(response);
       try {
         await projectsRoute.handler(request, response, searchParams);
       } catch (e) {
@@ -40,7 +40,7 @@ server.on(
           pathname || "",
           request,
           response,
-          searchParams,
+          query || "",
           isMockRoute.id
         );
       } catch (e) {
