@@ -2,16 +2,19 @@ import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Project } from "@/services/projects";
 import { Card, Icon } from "antd";
+import { ModalRequestDelete } from "@/utils/modalUtil";
 import "./index.scss";
 
 interface ProjectGridItemProps {
   project: Project;
   onEditProject: (project: Project) => void;
+  onDeleteProject: (project: Project) => () => Promise<void>;
 }
 
 const ProjectGridItem: React.FC<ProjectGridItemProps> = ({
   project,
-  onEditProject
+  onEditProject,
+  onDeleteProject
 }) => {
   const history = useHistory();
 
@@ -21,9 +24,17 @@ const ProjectGridItem: React.FC<ProjectGridItemProps> = ({
   const handleEditProject = useCallback(() => {
     onEditProject(project);
   }, [project, onEditProject]);
+  const handleDeleteProject = useCallback(() => {
+    ModalRequestDelete({
+      title: "提示",
+      content: "你确定要删除这个项目吗？",
+      onOk: onDeleteProject(project)
+    });
+  }, [onDeleteProject]);
   const actions = [
     <Icon type="edit" key="edit" onClick={handleEditProject} />,
-    <Icon type="table" key="detail" onClick={handleJumpToProjectDetail} />
+    <Icon type="table" key="detail" onClick={handleJumpToProjectDetail} />,
+    <Icon type="delete" key="delete" onClick={handleDeleteProject} />
   ];
 
   return (
