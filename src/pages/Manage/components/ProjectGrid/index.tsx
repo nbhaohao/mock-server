@@ -7,6 +7,7 @@ import "./index.scss";
 
 interface ProjectGridProps {
   onEditProject: (project: Project) => void;
+  onDeleteProject: (project: Project) => () => Promise<void>;
 }
 
 const useInitProjectsData = () => {
@@ -18,7 +19,10 @@ const useInitProjectsData = () => {
   }, []);
 };
 
-const ProjectGrid: React.FC<ProjectGridProps> = ({ onEditProject }) => {
+const ProjectGrid: React.FC<ProjectGridProps> = ({
+  onEditProject,
+  onDeleteProject
+}) => {
   useInitProjectsData();
   const { loading } = useContext(StoreContext);
   const {
@@ -33,6 +37,7 @@ const ProjectGrid: React.FC<ProjectGridProps> = ({ onEditProject }) => {
               <Col span={6} key={project.id}>
                 <ProjectGridItem
                   project={project}
+                  onDeleteProject={onDeleteProject}
                   onEditProject={onEditProject}
                 />
               </Col>

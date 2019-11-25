@@ -1,15 +1,1 @@
-[
-  {
-    "id": "k30wqjj899djxjsep6o",
-    "name": "AMA项目",
-    "url": "earth-test.nhsoft.cn/argus",
-    "routes": [
-      {
-        "name": "获得用户",
-        "method": "get",
-        "path": "getFuck",
-        "mockResponse": "{\"name\": \"zzh\"}"
-      }
-    ]
-  }
-]
+[{"id":"k30wqjj899djxjsep6o","name":"AMA项目","url":"earth-test.nhsoft.cn/argus","routes":[{"name":"获得用户","method":"get","path":"getFuck","mockResponse":"{\"name\": \"zzh\"}"}]},{"name":"test12312a","url":"fdasf","id":"k3egqbycx18o005uve","routes":[]},{"name":"xccxzczx","url":"czxczxc","id":"k3egqfbtuuhumkmnhr","routes":[]}]

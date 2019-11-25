@@ -24,6 +24,9 @@ export interface Project {
 }
 
 export interface PutProjectParams extends Project {}
+export interface DeleteProjectParams {
+  id: string;
+}
 
 export const ADD_PROJECT_ACTION = `${PROJECT_STORE}/addProject`;
 export const SAVE_PROJECTS = `${PROJECT_STORE}/updateProjects`;
@@ -42,6 +45,13 @@ export const putProject = (params: PutProjectParams) =>
   request<Project>({
     url: projectsApiPath,
     method: "PUT",
+    data: params
+  });
+
+export const deleteProject = (params: DeleteProjectParams) =>
+  request<Project>({
+    url: projectsApiPath,
+    method: "DELETE",
     data: params
   });
 

@@ -6,7 +6,7 @@ import {
   generateRandomId
 } from "../utils/util";
 import { dbUtil } from "../db/dbUtil";
-import { addProjectBody } from "../types/projects";
+import { addProjectBody, deleteProjectBody } from "../types/projects";
 import { Project } from "../types/db";
 
 const findTargetProject = ({
@@ -106,6 +106,26 @@ const putProject = async (
   });
 };
 
+const deleteProject = async (
+  request: IncomingMessage,
+  response: ServerResponse
+) => {
+  const jsonBody = await parseRequestBody<deleteProjectBody>(request);
+  let projectsArray = await dbUtil.getDbData();
+  const { id } = jsonBody;
+  const targetProject = findTargetProject({ projectsArray, id });
+  if (!targetProject) {
+    generateErrorResponse({ response, code: "20000", msg: "未找到项目" });
+    return;
+  }
+  projectsArray = projectsArray.filter(project => project.id !== id);
+  await dbUtil.saveDbData(projectsArray);
+  generateSuccessResponse({
+    response,
+    result: {}
+  });
+};
+
 const handleOptions = async (
   request: IncomingMessage,
   response: ServerResponse
@@ -120,7 +140,8 @@ const handler: { [key: string]: any } = {
   GET: getProject,
   POST: addProject,
   OPTIONS: handleOptions,
-  PUT: putProject
+  PUT: putProject,
+  DELETE: deleteProject
 };
 
 const handleProjectsRoutes = async (
