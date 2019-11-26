@@ -28,9 +28,12 @@ const ProjectGridItem: React.FC<ProjectGridItemProps> = ({
     ModalRequestDelete({
       title: "提示",
       content: "你确定要删除这个项目吗？",
-      onOk: onDeleteProject(project)
+      onOk: onDeleteProject({
+        ...project,
+        routes: project.routes.filter(item => item.name !== project.name)
+      })
     });
-  }, [onDeleteProject]);
+  }, [onDeleteProject, project]);
   const actions = [
     <Icon type="edit" key="edit" onClick={handleEditProject} />,
     <Icon type="table" key="detail" onClick={handleJumpToProjectDetail} />,
