@@ -6,11 +6,20 @@ import { PageTitle } from "@/components/PageTitle";
 import { ChildRouteTable } from "./components/ChildRouteTable";
 import { AddRouteModal } from "./components/AddRouteModal";
 import { EffectContext, StoreContext } from "@/App";
-import { PUT_PROJECT, Project, QUERY_PROJECT } from "@/services/projects";
+import {
+  PUT_PROJECT,
+  Project,
+  QUERY_PROJECT,
+  ProjectRoute,
+  putProject
+} from "@/services/projects";
 import { useModal } from "@/hooks/useModal";
 import { messageUtil } from "@/utils/messageUtil";
 import { EffectType } from "@/store";
-import { ADD_PROJECT_ROUTE_SUCCESS } from "@/constants/projects";
+import {
+  ADD_PROJECT_ROUTE_SUCCESS,
+  DELETE_PROJECT_ROUTE_SUCCESS
+} from "@/constants/projects";
 
 const useQueryProjectDetail = (id: string, effect: EffectType) => {
   const [projectObject, setProject] = useState<Project>({
@@ -69,6 +78,26 @@ const ManageDetail: React.FC = () => {
   const handleBackToPage = useCallback(() => {
     history.push("/manage");
   }, [history]);
+  const handleDeleteProjectRoute = useCallback(
+    (route: ProjectRoute) => () => {
+      return new Promise<void>(async (resolve, reject) => {
+        try {
+          const response = await putProject({
+            ...projectObject,
+            routes: projectObject.routes.filter(
+              item => item.name !== route.name
+            )
+          });
+          messageUtil({ type: "success", msg: DELETE_PROJECT_ROUTE_SUCCESS });
+          setProject(response.result);
+          resolve();
+        } catch (e) {
+          reject();
+        }
+      });
+    },
+    [projectObject, setProject]
+  );
   return (
     <Spin spinning={loading[QUERY_PROJECT]}>
       <div className="manage-detail-component">
@@ -84,7 +113,10 @@ const ManageDetail: React.FC = () => {
           >
             添加路由
           </Button>
-          <ChildRouteTable dataArray={projectObject.routes} />
+          <ChildRouteTable
+            dataArray={projectObject.routes}
+            onDeleteProjectRoute={handleDeleteProjectRoute}
+          />
         </div>
       </div>
       <AddRouteModal
