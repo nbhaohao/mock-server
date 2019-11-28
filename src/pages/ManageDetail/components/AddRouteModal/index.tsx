@@ -3,12 +3,13 @@ import { Modal } from "antd";
 import { ModalProps } from "antd/es/modal";
 import { AddRouteForm } from "./components/AddRouteForm";
 import { WrappedFormUtils } from "antd/lib/form/Form";
-import { ProjectRouteMethod } from "@/services/projects";
+import { ProjectRoute, ProjectRouteMethod } from "@/services/projects";
 
 type onSubmitFormType = (values: AddRouteFormValues) => void;
 
 interface AddRouteModalProps extends ModalProps {
   onSubmitForm: onSubmitFormType;
+  route: ProjectRoute;
 }
 interface AddRouteFormValues {
   name: string;
@@ -46,7 +47,8 @@ const AddRouteModal: React.FC<AddRouteModalProps> = ({
   visible,
   onCancel,
   onSubmitForm,
-  confirmLoading
+  confirmLoading,
+  route
 }) => {
   const { formRef, handleSubmitForm } = useAddRouteForm({ onSubmitForm });
   return (
@@ -59,7 +61,7 @@ const AddRouteModal: React.FC<AddRouteModalProps> = ({
       onOk={handleSubmitForm}
       confirmLoading={confirmLoading}
     >
-      <AddRouteForm ref={formRef} />
+      <AddRouteForm ref={formRef} route={route} />
     </Modal>
   );
 };
