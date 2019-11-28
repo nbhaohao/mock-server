@@ -7,7 +7,7 @@ import {
 } from "../utils/util";
 import { dbUtil } from "../db/dbUtil";
 import { addProjectBody, deleteProjectBody } from "../types/projects";
-import { Project } from "../types/db";
+import { Project, ProjectRoute } from "../types/db";
 
 const findTargetProject = ({
   projectsArray,
@@ -17,6 +17,12 @@ const findTargetProject = ({
   id: string;
 }): Project | undefined => {
   return projectsArray.find(project => project.id === id);
+};
+
+const checkIsRoutesRepeat = (routes: Array<ProjectRoute>) => {
+  const routeNames = routes.map(route => route.name);
+  const routeNamesSet = new Set(routeNames);
+  return routeNames.length !== routeNamesSet.size;
 };
 
 const getProject = async (
@@ -99,6 +105,10 @@ const putProject = async (
     }
     return project;
   });
+  const isRoutesRepeat = checkIsRoutesRepeat(newProject.routes);
+  if (isRoutesRepeat) {
+    generateErrorResponse({ response, code: "20000", msg: "路由名不得重复" });
+  }
   await dbUtil.saveDbData(projectsArray);
   generateSuccessResponse({
     response,
