@@ -55,8 +55,10 @@ export const renderNormalSelect = ({
   required,
   getFieldDecorator,
   placeholder,
-  options
+  options,
+  initialValue,
 }: {
+  initialValue?: any;
   label: string;
   key: string;
   required: boolean;
@@ -75,6 +77,7 @@ export const renderNormalSelect = ({
   return (
     <Form.Item label={label}>
       {getFieldDecorator(key, {
+        initialValue: initialValue || undefined,
         rules
       })(
         <Select placeholder={placeholder || `请选择${label}`}>

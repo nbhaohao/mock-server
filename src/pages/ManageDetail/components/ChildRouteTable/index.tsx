@@ -7,19 +7,30 @@ import { ModalRequestDelete } from "@/utils/modalUtil";
 interface ChildRouteTableProps {
   dataArray: Array<ProjectRoute>;
   onDeleteProjectRoute: (route: ProjectRoute) => () => Promise<void>;
+  onEditProjectRoute: (route: ProjectRoute) => void;
 }
 
 const ChildRouteTable: React.FC<ChildRouteTableProps> = ({
   dataArray,
-  onDeleteProjectRoute
+  onDeleteProjectRoute,
+  onEditProjectRoute
 }) => {
-  const handleDeleteRoute = useCallback((route: ProjectRoute): void => {
-    ModalRequestDelete({
-      title: "提示",
-      content: "你确定要删除这个路由吗？",
-      onOk: onDeleteProjectRoute(route)
-    });
-  }, [onDeleteProjectRoute]);
+  const handleDeleteRoute = useCallback(
+    (route: ProjectRoute): void => {
+      ModalRequestDelete({
+        title: "提示",
+        content: "你确定要删除这个路由吗？",
+        onOk: onDeleteProjectRoute(route)
+      });
+    },
+    [onDeleteProjectRoute]
+  );
+  const handleEditRoute = useCallback(
+    (route: ProjectRoute) => {
+      onEditProjectRoute(route);
+    },
+    [onEditProjectRoute]
+  );
 
   const tableColumns: Array<{
     dataIndex: string;
@@ -66,7 +77,13 @@ const ChildRouteTable: React.FC<ChildRouteTableProps> = ({
         render: (value: string, record: ProjectRoute) => {
           return (
             <Fragment>
-              <a>编辑</a>
+              <a
+                onClick={() => {
+                  handleEditRoute(record);
+                }}
+              >
+                编辑
+              </a>
               <Divider type="vertical" />
               <a
                 onClick={() => {
@@ -80,7 +97,7 @@ const ChildRouteTable: React.FC<ChildRouteTableProps> = ({
         }
       }
     ],
-    [handleDeleteRoute]
+    [handleDeleteRoute, handleEditRoute]
   );
   return (
     <Table

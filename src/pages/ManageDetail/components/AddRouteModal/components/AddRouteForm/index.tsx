@@ -4,19 +4,22 @@ import { WrappedFormUtils } from "antd/lib/form/Form";
 import { renderNormalInput, renderNormalSelect } from "@/utils/antdFormUtils";
 import { FORM_WRAPPER_COL, FORM_LABEL_COL } from "@/constants/form";
 import { JSONEditor } from "./components/JSONEditor";
+import { ProjectRoute } from "@/services/projects";
 
 interface AddRouteFormProps {
   form: WrappedFormUtils;
+  route: ProjectRoute;
 }
 
-const _AddRouteForm: React.FC<AddRouteFormProps> = ({ form }) => {
+const _AddRouteForm: React.FC<AddRouteFormProps> = ({ form, route }) => {
   const { getFieldDecorator } = form;
   const routeNameInput = renderNormalInput({
     label: "路由名称",
     key: "name",
     required: true,
     max: 10,
-    getFieldDecorator
+    getFieldDecorator,
+    initialValue: route.name || ""
   });
   const methodSelect = renderNormalSelect({
     label: "路由方法",
@@ -28,7 +31,8 @@ const _AddRouteForm: React.FC<AddRouteFormProps> = ({ form }) => {
       { value: "post", label: "POST" },
       { value: "put", label: "POST" },
       { value: "delete", label: "DELETE" }
-    ]
+    ],
+    initialValue: route.method || ""
   });
   const routePathInput = renderNormalInput({
     label: "路由路径",
@@ -36,13 +40,14 @@ const _AddRouteForm: React.FC<AddRouteFormProps> = ({ form }) => {
     required: true,
     max: 99,
     getFieldDecorator,
-    placeholder: "例如：goods/get、goods"
+    placeholder: "例如：goods/get、goods",
+    initialValue: route.path || ""
   });
   const responseLabel = "mock数据";
   const responseEditor = (
     <Form.Item label={responseLabel} required>
       {getFieldDecorator("mockResponse", {
-        initialValue: "",
+        initialValue: route.mockResponse || "",
         rules: [
           {
             validator: (rule, value, callback) => {
@@ -76,6 +81,6 @@ const _AddRouteForm: React.FC<AddRouteFormProps> = ({ form }) => {
   );
 };
 
-const AddRouteForm = Form.create()(_AddRouteForm);
+const AddRouteForm = Form.create<AddRouteFormProps>()(_AddRouteForm);
 
 export { AddRouteForm };
