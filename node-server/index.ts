@@ -8,8 +8,17 @@ import { PORT, API_PRE_FIX } from "./config";
 import { projectsRoute } from "./routes/projects";
 import { checkIsMockRoute, mockRoute } from "./routes/mock";
 import { checkIsStaticRegex, staticRoute } from "./routes/static";
+import { dbUtil } from "./db/dbUtil";
 
 import { generateErrorResponse, handleAccessOrigin } from "./utils/util";
+
+try {
+  (async () => {
+    await dbUtil.initDb();
+  })();
+} catch (e) {
+  console.log(e.toString());
+}
 
 const server = http.createServer();
 server.on(
