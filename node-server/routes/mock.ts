@@ -48,7 +48,8 @@ const handleMockRoute = ({
     route =>
       route.path === path && route.method.toUpperCase() === request.method
   );
-  if (mockRoute === undefined) {
+  // 走代理请求
+  if (mockRoute === undefined || mockRoute.state !== 'enabled') {
     const queryString = query ? `?${query}` : "";
     proxyRequest({
       url: `http://${projectItem.url}/${path}${queryString}`,

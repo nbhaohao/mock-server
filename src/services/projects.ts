@@ -2,7 +2,7 @@ import { request, URL_PATH_JOIN } from "@/utils/request";
 import { PROJECT_STORE } from "@/constants/store";
 
 const projectsApiPath = URL_PATH_JOIN({ path: PROJECT_STORE });
-
+type ProjectRouteStatus = "enabled" | "disabled";
 export enum ProjectRouteMethod {
   GET = "get",
   POST = "post",
@@ -10,6 +10,7 @@ export enum ProjectRouteMethod {
   DELETE = "delete"
 }
 export interface ProjectRoute {
+  state: ProjectRouteStatus;
   name: string;
   method: ProjectRouteMethod;
   path: string;

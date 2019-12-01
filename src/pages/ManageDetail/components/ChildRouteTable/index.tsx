@@ -1,19 +1,23 @@
 import React, { Fragment, useCallback, useMemo } from "react";
-import { Table, Popover, Divider } from "antd";
+import { Table, Popover, Divider, Switch } from "antd";
 import { ProjectRoute } from "@/services/projects";
 import { JSONViewer } from "@/components/JSONViewer";
 import { ModalRequestDelete } from "@/utils/modalUtil";
 
 interface ChildRouteTableProps {
+  switchLoadingRoute: ProjectRoute | null;
   dataArray: Array<ProjectRoute>;
   onDeleteProjectRoute: (route: ProjectRoute) => () => Promise<void>;
   onEditProjectRoute: (route: ProjectRoute) => void;
+  onChangeProjectRouteStatus: (route: ProjectRoute) => void;
 }
 
 const ChildRouteTable: React.FC<ChildRouteTableProps> = ({
   dataArray,
   onDeleteProjectRoute,
-  onEditProjectRoute
+  onEditProjectRoute,
+  onChangeProjectRouteStatus,
+  switchLoadingRoute
 }) => {
   const handleDeleteRoute = useCallback(
     (route: ProjectRoute): void => {
@@ -31,7 +35,15 @@ const ChildRouteTable: React.FC<ChildRouteTableProps> = ({
     },
     [onEditProjectRoute]
   );
-
+  const handleChangeStatus = useCallback(
+    ({ checked, route }) => {
+      onChangeProjectRouteStatus({
+        ...route,
+        state: checked ? "enabled" : "disabled"
+      });
+    },
+    [onChangeProjectRouteStatus]
+  );
   const tableColumns: Array<{
     dataIndex: string;
     title: string;
@@ -39,6 +51,28 @@ const ChildRouteTable: React.FC<ChildRouteTableProps> = ({
     render?: (...params: any) => any;
   }> = useMemo(
     () => [
+      {
+        dataIndex: "state",
+        title: "状态",
+        align: "center",
+        render: (value: string, record: ProjectRoute) => {
+          return (
+            <Switch
+              loading={
+                !!(
+                  switchLoadingRoute && switchLoadingRoute.name === record.name
+                )
+              }
+              onChange={checked => {
+                handleChangeStatus({ checked, route: record });
+              }}
+              checkedChildren="启用"
+              unCheckedChildren="禁用"
+              checked={value === "enabled"}
+            />
+          );
+        }
+      },
       {
         dataIndex: "name",
         title: "路由名称",
@@ -97,7 +131,7 @@ const ChildRouteTable: React.FC<ChildRouteTableProps> = ({
         }
       }
     ],
-    [handleDeleteRoute, handleEditRoute]
+    [handleDeleteRoute, handleEditRoute, switchLoadingRoute, handleChangeStatus]
   );
   return (
     <Table

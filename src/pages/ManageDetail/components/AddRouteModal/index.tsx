@@ -48,13 +48,14 @@ const AddRouteModal: React.FC<AddRouteModalProps> = ({
   onCancel,
   onSubmitForm,
   confirmLoading,
-  route
+  route,
+  title
 }) => {
   const { formRef, handleSubmitForm } = useAddRouteForm({ onSubmitForm });
   return (
     <Modal
       width={800}
-      title="添加路由"
+      title={title}
       visible={visible}
       onCancel={onCancel}
       destroyOnClose
