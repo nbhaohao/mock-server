@@ -3,6 +3,13 @@
   "name": "mock-server",
   "version": "0.1.0",
   "private": true,
+  "bin": {
+    "mock-server-start": "./node-server-dist/index.js"
+  },
+  "files": [
+    "build",
+    "node-server-dist"
+  ],
   "dependencies": {
     "@types/jest": "24.0.18",
     "@types/mime-types": "^2.1.0",
@@ -27,7 +34,8 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-app-rewired start",
     "start:server": "ts-node-dev --project node-server/tsconfig.json -- node-server/index.ts",
-    "build": "react-app-rewired build",
+    "build:server": "tsc node-server --outDir node-server-dist",
+    "build": "react-app-rewired build && build:server",
     "build:analyze": "yarn run build && yarn run analyze",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"

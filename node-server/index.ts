@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as http from "http";
 import { IncomingMessage, ServerResponse } from "http";
 import * as URL from "url";
@@ -67,4 +69,7 @@ server.on(
 
 server.listen(PORT, () => {
   console.log(`服务器启动成功，正在监听${PORT}端口`);
+  console.log(
+    `网页端启动成功，http://localhost:${PORT}/mockServer/static/index.html/#/manage`
+  );
 });
