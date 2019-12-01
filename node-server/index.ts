@@ -5,6 +5,7 @@ import * as queryString from "querystring";
 import { PORT, API_PRE_FIX } from "./config";
 import { projectsRoute } from "./routes/projects";
 import { checkIsMockRoute, mockRoute } from "./routes/mock";
+import { checkIsStaticRegex, staticRoute } from "./routes/static";
 
 import { generateErrorResponse, handleAccessOrigin } from "./utils/util";
 
@@ -26,6 +27,18 @@ server.on(
         await projectsRoute.handler(request, response, searchParams);
       } catch (e) {
         generateErrorResponse({ response, code: "20000", msg: e.toString() });
+      }
+      return;
+    }
+    if (checkIsStaticRegex.test(pathname || "")) {
+      if (method !== "GET") {
+        generateErrorResponse({ response, code: "40000" });
+        return;
+      }
+      try {
+        await staticRoute.handler(request, response, pathname || "");
+      } catch (e) {
+        generateErrorResponse({ response, code: "40000" });
       }
       return;
     }

@@ -1,12 +1,13 @@
 import { IncomingMessage, ServerResponse } from "http";
 
-type ErrorCode = "20000" | "50000";
+type ErrorCode = "20000" | "50000" | "40000";
 
 type CodeMessageMapType = { [key in ErrorCode]: string };
 
 const codeMessageMap: CodeMessageMapType = {
   "20000": "找不到该路由",
-  "50000": "系统错误"
+  "50000": "系统错误",
+  "40000": "找不到资源"
 };
 
 // 生成成功
