@@ -19,7 +19,8 @@ import { messageUtil } from "@/utils/messageUtil";
 import { EffectType } from "@/store";
 import {
   ADD_PROJECT_ROUTE_SUCCESS,
-  DELETE_PROJECT_ROUTE_SUCCESS, EDIT_PROJECT_ROUTE_SUCCESS
+  DELETE_PROJECT_ROUTE_SUCCESS,
+  EDIT_PROJECT_ROUTE_SUCCESS
 } from "@/constants/projects";
 
 const useQueryProjectDetail = (id: string, effect: EffectType) => {
@@ -51,7 +52,8 @@ const generateDefaultProjectRoute = (): ProjectRoute => ({
   name: "",
   method: ProjectRouteMethod.GET,
   path: "",
-  mockResponse: ""
+  mockResponse: "",
+  state: "enabled"
 });
 
 const ManageDetail: React.FC = () => {
@@ -63,6 +65,10 @@ const ManageDetail: React.FC = () => {
   const [projectRoute, setProjectRoute] = useState<ProjectRoute>(
     generateDefaultProjectRoute()
   );
+  const [
+    switchLoadingRoute,
+    setSwitchLoadingRoute
+  ] = useState<ProjectRoute | null>(null);
   const pageTitle = projectObject.name
     ? `项目详情-${projectObject.name}`
     : "项目详情";
@@ -74,12 +80,18 @@ const ManageDetail: React.FC = () => {
       if (isEditMode) {
         newRoutes = projectObject.routes.map(route => {
           if (route.name === projectRoute.name) {
-            return values;
+            return {
+              ...route,
+              ...values
+            };
           }
           return route;
         });
       } else {
-        newRoutes = projectObject.routes.concat(values);
+        newRoutes = projectObject.routes.concat({
+          ...values,
+          state: "enabled"
+        });
       }
       await effect({
         type: PUT_PROJECT,
@@ -98,7 +110,7 @@ const ManageDetail: React.FC = () => {
       });
       hiddenModal();
     },
-    [projectObject, setProject, hiddenModal, isEditMode]
+    [projectObject, setProject, hiddenModal, isEditMode, projectRoute]
   );
   const handleBackToPage = useCallback(() => {
     history.push("/manage");
@@ -130,6 +142,27 @@ const ManageDetail: React.FC = () => {
     },
     [setProjectRoute, showModal]
   );
+  const handleChangeProjectRouteStatus = useCallback(
+    async (route: ProjectRoute) => {
+      setSwitchLoadingRoute(route);
+      try {
+        const response = await putProject({
+          ...projectObject,
+          routes: projectObject.routes.map(item => {
+            if (item.name === route.name) {
+              return route;
+            }
+            return item;
+          })
+        });
+        setProject(response.result);
+      } catch (e) {
+      } finally {
+        setSwitchLoadingRoute(null);
+      }
+    },
+    [setSwitchLoadingRoute, projectObject, setProject]
+  );
   const handleAddProjectRoute = useCallback(() => {
     setProjectRoute(generateDefaultProjectRoute());
     showModal();
@@ -147,16 +180,19 @@ const ManageDetail: React.FC = () => {
             className="manage-detail-add-button"
             onClick={handleAddProjectRoute}
           >
-            {isEditMode ? "编辑路由" : "添加路由"}
+            添加路由
           </Button>
           <ChildRouteTable
+            switchLoadingRoute={switchLoadingRoute}
             dataArray={projectObject.routes}
             onDeleteProjectRoute={handleDeleteProjectRoute}
             onEditProjectRoute={handleEditProjectRoute}
+            onChangeProjectRouteStatus={handleChangeProjectRouteStatus}
           />
         </div>
       </div>
       <AddRouteModal
+        title={isEditMode ? "编辑路由" : "添加路由"}
         route={projectRoute}
         confirmLoading={loading[PUT_PROJECT]}
         visible={visible}
