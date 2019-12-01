@@ -11,7 +11,7 @@
     "node-server-dist"
   ],
   "dependencies": {
-    "mime-types": "^2.1.25",
+    "mime-types": "^2.1.25"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
