@@ -4,6 +4,13 @@ import { ProjectsArray } from "../types/db";
 
 const dbFile = path.resolve(__dirname, "db.json");
 
+const initDb = async (): Promise<void> => {
+  if (fs.existsSync(dbFile)) {
+    return;
+  }
+  return fs.promises.writeFile(dbFile, "[]");
+};
+
 const getDbData = async (): Promise<ProjectsArray> => {
   return fs.promises.readFile(dbFile).then(data => {
     let dbData = [];
@@ -20,7 +27,8 @@ const saveDbData = async (newData: ProjectsArray): Promise<void> => {
 
 const dbUtil = {
   getDbData,
-  saveDbData
+  saveDbData,
+  initDb
 };
 
 export { dbUtil };
