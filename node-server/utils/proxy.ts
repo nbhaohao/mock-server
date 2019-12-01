@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse, request } from "http";
-import { parseRequestBody } from "./util";
+import {generateErrorResponse, handleAccessOrigin, parseRequestBody} from "./util";
 import * as zlib from "zlib";
 
 const proxyRequest = async ({
@@ -44,6 +44,12 @@ const proxyRequest = async ({
   );
   proxyRq.on("error", e => {
     console.log("代理请求出错", e);
+    handleAccessOrigin(originResponse)
+    generateErrorResponse({
+      response: originResponse,
+      code: "20000",
+      msg: e.message.toString()
+    });
   });
   const requestBody = await parseRequestBody(originRequest, false);
   proxyRq.write(requestBody);
