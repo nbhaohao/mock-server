@@ -1,7 +1,7 @@
 {
   "homepage": "/mockServer/static",
   "name": "mock-server-gui",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": false,
   "bin": {
     "mock-server-start": "node-server-dist/index.js"
