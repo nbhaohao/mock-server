@@ -1,5 +1,9 @@
 import { IncomingMessage, ServerResponse, request } from "http";
-import {generateErrorResponse, handleAccessOrigin, parseRequestBody} from "./util";
+import {
+  generateErrorResponse,
+  handleAccessOrigin,
+  parseRequestBody
+} from "./util";
 import * as zlib from "zlib";
 
 const proxyRequest = async ({
@@ -37,14 +41,14 @@ const proxyRequest = async ({
           originResponse.setHeader(key, <string>res.headers[key]);
         }
         originResponse.setHeader("Content-Encoding", "identity");
-        originResponse.statusCode = res.statusCode;
+        originResponse.statusCode = res.statusCode || 200;
         originResponse.end(body);
       });
     }
   );
   proxyRq.on("error", e => {
     console.log("代理请求出错", e);
-    handleAccessOrigin(originResponse)
+    handleAccessOrigin(originResponse);
     generateErrorResponse({
       response: originResponse,
       code: "20000",

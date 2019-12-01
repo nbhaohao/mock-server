@@ -1,6 +1,6 @@
 import React from "react";
 import "./index.scss";
-import { Button } from "antd";
+import { Button, Icon } from "antd";
 interface FloatAddButtonProps {
   onClick: () => void;
 }
@@ -11,10 +11,11 @@ const FloatAddButton: React.FC<FloatAddButtonProps> = ({ onClick }) => {
       onClick={onClick}
       type="primary"
       shape="circle"
-      icon="plus"
       size="large"
       className="float-add-button-component"
-    />
+    >
+      <Icon type="plus" />
+    </Button>
   );
 };
 

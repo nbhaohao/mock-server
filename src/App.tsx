@@ -2,7 +2,7 @@ import React from "react";
 import { ConfigProvider } from "antd";
 import zhCN from "antd/es/locale/zh_CN";
 import { Layout } from "@/components/Layout";
-import { BrowserRouter as Router } from "react-router-dom";
+import { HashRouter as Router } from "react-router-dom";
 import {
   useStore,
   initialState,
