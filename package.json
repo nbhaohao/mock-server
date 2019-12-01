@@ -1,4 +1,5 @@
 {
+  "homepage": "/mockServer/static",
   "name": "mock-server",
   "version": "0.1.0",
   "private": true,
@@ -17,12 +18,15 @@
     "react-json-view": "^1.19.1",
     "react-router-dom": "^5.1.1",
     "react-scripts": "3.1.2",
+    "source-map-explorer": "^2.1.1",
     "typescript": "3.6.3"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-app-rewired start",
     "start:server": "ts-node-dev --project node-server/tsconfig.json -- node-server/index.ts",
     "build": "react-app-rewired build",
+    "build:analyze": "yarn run build && yarn run analyze",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
