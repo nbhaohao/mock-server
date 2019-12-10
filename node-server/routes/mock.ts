@@ -1,6 +1,10 @@
 import { dbUtil } from "../db/dbUtil";
 import { IncomingMessage, ServerResponse } from "http";
-import {generateErrorResponse, handleAccessOrigin} from "../utils/util";
+import {
+  generateErrorResponse,
+  generateSuccessResponse,
+  handleAccessOrigin
+} from "../utils/util";
 import { proxyRequest } from "../utils/proxy";
 import { Project } from "../types/db";
 
@@ -44,12 +48,19 @@ const handleMockRoute = ({
   query: string;
   projectItem: Project;
 }) => {
+  if (request.method === "OPTIONS") {
+    generateSuccessResponse({
+      response,
+      result: {}
+    });
+    return;
+  }
   const mockRoute = projectItem.routes.find(
     route =>
       route.path === path && route.method.toUpperCase() === request.method
   );
   // 走代理请求
-  if (mockRoute === undefined || mockRoute.state !== 'enabled') {
+  if (mockRoute === undefined || mockRoute.state !== "enabled") {
     const queryString = query ? `?${query}` : "";
     proxyRequest({
       url: `http://${projectItem.url}/${path}${queryString}`,
