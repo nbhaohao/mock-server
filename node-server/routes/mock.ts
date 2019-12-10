@@ -49,6 +49,7 @@ const handleMockRoute = ({
   projectItem: Project;
 }) => {
   if (request.method === "OPTIONS") {
+    handleAccessOrigin(response);
     generateSuccessResponse({
       response,
       result: {}
